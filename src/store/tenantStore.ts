@@ -1,10 +1,6 @@
 import { create } from 'zustand'
-import axios from 'axios'
 import { toast } from 'react-toastify'
-
-const api = axios.create({
-  baseURL: 'http://localhost:8080'
-})
+import { api } from '../config/api'
 
 // Define the Tenant interface based on the provided JSON structure
 export interface Tenant {
@@ -24,7 +20,7 @@ interface TenantState {
   tenants: Tenant[]
   loading: boolean
   error: string | null
-  fetchTenants: () => Promise<void>
+  fetchTenants: (isActive?: boolean) => Promise<void>
   createTenant: (
     newTenant: Omit<Tenant, 'id' | 'createdAt' | 'updatedAt'>
   ) => Promise<void>
@@ -38,10 +34,14 @@ export const useTenantStore = create<TenantState>((set, get) => ({
   loading: false,
   error: null,
 
-  fetchTenants: async () => {
+  fetchTenants: async (isActive?: boolean) => {
     set({ loading: true, error: null })
     try {
-      const response = await api.get('/api/v1/tenants')
+      const params: { isActive?: boolean } = {}
+      if (isActive !== undefined) {
+        params.isActive = isActive
+      }
+      const response = await api.get('/api/v1/tenants', { params })
       if (response.data.success) {
         set({ tenants: response.data.data, loading: false })
       } else {

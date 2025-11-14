@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import AdminContent from '../components/admin/AdminContent'
-import { useTenantStore, Tenant } from '../store/tenantStore'
+import {
+  useSubscriptionPlanStore,
+  SubscriptionPlan
+} from '../store/subscriptionPlanStore'
 import 'react-toastify/dist/ReactToastify.css'
-import TenantModal, { SaveableTenant } from '../components/admin/TenantModal'
+import SubscriptionPlanModal, {
+  SaveableSubscriptionPlan
+} from '../components/admin/SubscriptionPlanModal'
 import DeleteConfirmationModal from '../components/admin/DeleteConfirmationModal'
 import {
   PencilIcon,
@@ -11,72 +16,68 @@ import {
   ArrowPathIcon
 } from '@heroicons/react/24/outline'
 
-const AdminTenantPage: React.FC = () => {
+const AdminSubscriptionPlanPage: React.FC = () => {
   const {
-    tenants,
+    subscriptionPlans,
     loading,
     error,
-    fetchTenants,
-    createTenant,
-    updateTenant,
-    deleteTenant
-  } = useTenantStore()
+    fetchSubscriptionPlans,
+    createSubscriptionPlan,
+    updateSubscriptionPlan,
+    deleteSubscriptionPlan
+  } = useSubscriptionPlanStore()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const [tenantToDeleteId, setTenantToDeleteId] = useState<number | null>(null)
-  const [currentTenant, setCurrentTenant] = useState<SaveableTenant | null>(
-    null
-  )
-  const [filterIsActive, setFilterIsActive] = useState<boolean | undefined>(
-    undefined
-  )
+  const [planToDeleteId, setPlanToDeleteId] = useState<number | null>(null)
+  const [currentPlan, setCurrentPlan] =
+    useState<SaveableSubscriptionPlan | null>(null)
 
   useEffect(() => {
-    fetchTenants(filterIsActive)
-  }, [fetchTenants, filterIsActive])
+    fetchSubscriptionPlans()
+  }, [fetchSubscriptionPlans])
 
   const handleCreate = () => {
-    setCurrentTenant(null)
+    setCurrentPlan(null)
     setIsModalOpen(true)
   }
 
   const handleEdit = (id: number) => {
-    const tenantToEdit = tenants.find((tenant) => tenant.id === id)
-    if (tenantToEdit) {
-      setCurrentTenant(tenantToEdit)
+    const planToEdit = subscriptionPlans.find((plan) => plan.id === id)
+    if (planToEdit) {
+      setCurrentPlan(planToEdit)
       setIsModalOpen(true)
     }
   }
 
   const handleDelete = (id: number) => {
-    setTenantToDeleteId(id)
+    setPlanToDeleteId(id)
     setIsDeleteModalOpen(true)
   }
 
   const confirmDelete = async () => {
-    if (tenantToDeleteId !== null) {
-      await deleteTenant(tenantToDeleteId)
+    if (planToDeleteId !== null) {
+      await deleteSubscriptionPlan(planToDeleteId)
       setIsDeleteModalOpen(false)
-      setTenantToDeleteId(null)
+      setPlanToDeleteId(null)
     }
   }
 
-  const handleSave = async (tenantData: SaveableTenant) => {
-    if (tenantData.id) {
-      await updateTenant(tenantData.id, tenantData)
+  const handleSave = async (planData: SaveableSubscriptionPlan) => {
+    if (planData.id) {
+      await updateSubscriptionPlan(planData.id, planData)
     } else {
-      const { id, ...newTenantData } = tenantData // Exclude id for creation
-      await createTenant(newTenantData)
+      const { id, ...newPlanData } = planData // Exclude id for creation
+      await createSubscriptionPlan(newPlanData)
     }
     setIsModalOpen(false)
   }
 
   if (loading) {
     return (
-      <AdminContent title="Tenants">
+      <AdminContent title="Subscription Plans">
         <div className="text-center py-10 flex flex-col items-center justify-center">
           <ArrowPathIcon className="h-10 w-10 text-indigo-500 animate-spin mb-3" />
-          <p className="text-gray-700">Loading tenants...</p>
+          <p className="text-gray-700">Loading subscription plans...</p>
         </div>
       </AdminContent>
     )
@@ -84,7 +85,7 @@ const AdminTenantPage: React.FC = () => {
 
   if (error) {
     return (
-      <AdminContent title="Tenants">
+      <AdminContent title="Subscription Plans">
         <div className="text-center py-10 text-red-500">Error: {error}</div>
       </AdminContent>
     )
@@ -92,43 +93,14 @@ const AdminTenantPage: React.FC = () => {
 
   return (
     <>
-      <AdminContent title="Tenants">
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center space-x-4">
-            <label htmlFor="statusFilter" className="text-gray-700">
-              Filter by Status:
-            </label>
-            <select
-              id="statusFilter"
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-              value={
-                filterIsActive === undefined
-                  ? 'all'
-                  : filterIsActive
-                  ? 'active'
-                  : 'inactive'
-              }
-              onChange={(e) => {
-                if (e.target.value === 'all') {
-                  setFilterIsActive(undefined)
-                } else if (e.target.value === 'active') {
-                  setFilterIsActive(true)
-                } else {
-                  setFilterIsActive(false)
-                }
-              }}
-            >
-              <option value="all">All</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
+      <AdminContent title="Subscription Plans">
+        <div className="flex justify-end items-center mb-6">
           <button
             onClick={handleCreate}
             className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center"
           >
             <PlusCircleIcon className="h-5 w-5 mr-2" />
-            Add Tenant
+            Add Subscription Plan
           </button>
         </div>
 
@@ -144,19 +116,19 @@ const AdminTenantPage: React.FC = () => {
                     Name
                   </th>
                   <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Email
+                    Price Monthly
                   </th>
                   <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Domain
+                    Price Yearly
                   </th>
                   <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Subdomain
+                    Max Users
                   </th>
                   <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Phone Number
+                    Max Devices
                   </th>
                   <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Active
+                    Description
                   </th>
                   <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Actions
@@ -164,55 +136,47 @@ const AdminTenantPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {tenants.map((tenant, index) => (
-                  <tr key={tenant.id} className="hover:bg-gray-50">
+                {subscriptionPlans.map((plan, index) => (
+                  <tr key={plan.id} className="hover:bg-gray-50">
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                       {index + 1}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                      {tenant.name}
+                      {plan.name}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                      {tenant.email}
+                      {plan.priceMonthly.toLocaleString('id-ID', {
+                        style: 'currency',
+                        currency: 'IDR'
+                      })}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                      {tenant.domain}
+                      {plan.priceYearly.toLocaleString('id-ID', {
+                        style: 'currency',
+                        currency: 'IDR'
+                      })}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                      {tenant.subdomain}
+                      {plan.maxUsers}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                      {tenant.phoneNumber}
+                      {plan.maxDevices}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                      <span
-                        className={`relative inline-block px-3 py-1 font-semibold leading-tight ${
-                          tenant.active ? 'text-green-900' : 'text-red-900'
-                        }`}
-                      >
-                        <span
-                          aria-hidden
-                          className={`absolute inset-0 opacity-50 rounded-full ${
-                            tenant.active ? 'bg-green-200' : 'bg-red-200'
-                          }`}
-                        ></span>
-                        <span className="relative">
-                          {tenant.active ? 'Active' : 'Inactive'}
-                        </span>
-                      </span>
+                      {plan.description}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                       <button
-                        onClick={() => handleEdit(tenant.id)}
+                        onClick={() => handleEdit(plan.id)}
                         className="text-indigo-600 hover:text-indigo-900 mr-3 transition duration-300 ease-in-out transform hover:scale-110"
-                        title="Edit Tenant"
+                        title="Edit Subscription Plan"
                       >
                         <PencilIcon className="h-5 w-5" />
                       </button>
                       <button
-                        onClick={() => handleDelete(tenant.id)}
+                        onClick={() => handleDelete(plan.id)}
                         className="text-red-600 hover:text-red-900 transition duration-300 ease-in-out transform hover:scale-110"
-                        title="Delete Tenant"
+                        title="Delete Subscription Plan"
                       >
                         <TrashIcon className="h-5 w-5" />
                       </button>
@@ -225,11 +189,11 @@ const AdminTenantPage: React.FC = () => {
         </div>
       </AdminContent>
       {isModalOpen && (
-        <TenantModal
+        <SubscriptionPlanModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onSave={handleSave}
-          initialData={currentTenant}
+          initialData={currentPlan}
         />
       )}
 
@@ -239,7 +203,8 @@ const AdminTenantPage: React.FC = () => {
           onClose={() => setIsDeleteModalOpen(false)}
           onConfirm={confirmDelete}
           itemName={
-            tenants.find((t) => t.id === tenantToDeleteId)?.name || 'tenant'
+            subscriptionPlans.find((p) => p.id === planToDeleteId)?.name ||
+            'subscription plan'
           }
         />
       )}
@@ -247,4 +212,4 @@ const AdminTenantPage: React.FC = () => {
   )
 }
 
-export default AdminTenantPage
+export default AdminSubscriptionPlanPage

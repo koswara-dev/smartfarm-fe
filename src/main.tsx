@@ -9,6 +9,7 @@ import AdminDashboardPage from './page/AdminDashboardPage'
 import AdminTenantPage from './page/AdminTenantPage'
 import AdminLayout from './components/admin/AdminLayout'
 import { Outlet } from 'react-router-dom'
+import AdminSubscriptionPlanPage from './page/AdminSubscriptionPlanPage'
 
 createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -26,6 +27,10 @@ createRoot(document.getElementById('root') as HTMLElement).render(
         >
           <Route index element={<AdminDashboardPage />} />
           <Route path="tenants" element={<AdminTenantPage />} />
+          <Route
+            path="subscription-plans"
+            element={<AdminSubscriptionPlanPage />}
+          />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
