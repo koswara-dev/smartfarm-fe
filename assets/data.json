@@ -1,0 +1,64 @@
+{
+  "titleApp": "Smart Farming Solutions",
+  "appName": "SmartFarm",
+  "logoHeader": "assets/logo.png",
+  "logoFooter": "assets/logo1.png",
+  "favicon": "assets/favicon.png",
+  "footerMotto": "Solusi pertanian cerdas untuk masa depan yang lebih hijau dan produktif.",
+  "features": [
+    {
+      "icon": "https://img.icons8.com/?size=80&id=UD9nG7mgbuXZ&format=png&color=000000",
+      "title": "Monitoring Sensor",
+      "description": "Pantau suhu, kelembaban, pH, dan nutrisi tanah secara real-time."
+    },
+    {
+      "icon": "https://img.icons8.com/?size=80&id=VYEB668Or0GP&format=png&color=000000",
+      "title": "Sistem Irigasi Otomatis",
+      "description": "Irigasi cerdas berdasarkan kebutuhan tanaman dan kondisi cuaca."
+    },
+    {
+      "icon": "https://img.icons8.com/?size=80&id=4MVgEjaiuTZF&format=png&color=000000",
+      "title": "Dashboard Real-time",
+      "description": "Akses semua data dan kontrol dari satu dashboard intuitif."
+    },
+    {
+      "icon": "https://img.icons8.com/?size=100&id=MNxfPwMSvgm4&format=png&color=000000",
+      "title": "Notifikasi & Alert",
+      "description": "Dapatkan peringatan instan untuk kondisi kritis atau anomali."
+    },
+    {
+      "icon": "https://img.icons8.com/?size=100&id=OQ1NmYPi9L3D&format=png&color=000000",
+      "title": "Data Analytics dan Prediksi",
+      "description": "Analisis mendalam dan prediksi untuk pengambilan keputusan yang lebih baik."
+    },
+    {
+      "icon": "https://img.icons8.com/?size=100&id=VyHiZ6NtDg25&format=png&color=000000",
+      "title": "Manajemen Lahan dan Tanaman",
+      "description": "Kelola lahan dan siklus tanaman dengan lebih terstruktur."
+    }
+  ],
+  "products": [
+    { "id": "basic", "originalPrice": 500000, "discount": 10 },
+    { "id": "advanced", "originalPrice": 1500000, "discount": 14 },
+    { "id": "enterprise", "originalPrice": 0, "discount": 0 }
+  ],
+  "contact": {
+    "email": null,
+    "phone": "+62 812 3456 7890",
+    "address": "Jl. Pertanian No. 1, Kota Hijau, Indonesia"
+  },
+  "socialMedia": {
+    "facebook": {
+      "url": "https://www.facebook.com/MobileLegendsGameIndonesia/?locale=id_ID",
+      "icon": "https://img.icons8.com/?size=24&id=uLWV5A9vXIPu&format=png&color=000000"
+    },
+    "twitter": {
+      "url": "#",
+      "icon": "https://img.icons8.com/?size=24&id=phOKFKYpe00C&format=png&color=000000"
+    },
+    "instagram": {
+      "url": "#",
+      "icon": "https://img.icons8.com/?size=24&id=Xy10Jcu1L2Su&format=png&color=000000"
+    }
+  }
+}
