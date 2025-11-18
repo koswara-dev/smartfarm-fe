@@ -2,6 +2,7 @@ import React from 'react'
 import AdminNavbar from './AdminNavbar'
 import AdminSidebar from './AdminSidebar'
 import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css' // Import the CSS
 
 interface AdminLayoutProps {
   children: React.ReactNode

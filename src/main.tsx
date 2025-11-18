@@ -10,6 +10,7 @@ import AdminTenantPage from './page/AdminTenantPage'
 import AdminLayout from './components/admin/AdminLayout'
 import { Outlet } from 'react-router-dom'
 import AdminSubscriptionPlanPage from './page/AdminSubscriptionPlanPage'
+import AdminSubscriptionPage from './page/AdminSubscriptionPage' // Import the new page
 
 createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -31,6 +32,8 @@ createRoot(document.getElementById('root') as HTMLElement).render(
             path="subscription-plans"
             element={<AdminSubscriptionPlanPage />}
           />
+          <Route path="subscriptions" element={<AdminSubscriptionPage />} />{' '}
+          {/* New route */}
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
