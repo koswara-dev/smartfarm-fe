@@ -8,32 +8,31 @@ import NotFoundPage from './page/NotFoundPage'
 import AdminDashboardPage from './page/AdminDashboardPage'
 import AdminTenantPage from './page/AdminTenantPage'
 import AdminLayout from './components/admin/AdminLayout'
-import { Outlet } from 'react-router-dom'
 import AdminSubscriptionPlanPage from './page/AdminSubscriptionPlanPage'
 import AdminSubscriptionPage from './page/AdminSubscriptionPage' // Import the new page
+import LoginPage from './page/LoginPage'
+import ProtectedRoute from './components/ProtectedRoute'
+import AccessDeniedPage from './page/AccessDeniedPage'
 
 createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route
-          path="/admin"
-          element={
-            <AdminLayout>
-              <Outlet />
-            </AdminLayout>
-          }
-        >
-          <Route index element={<AdminDashboardPage />} />
-          <Route path="tenants" element={<AdminTenantPage />} />
-          <Route
-            path="subscription-plans"
-            element={<AdminSubscriptionPlanPage />}
-          />
-          <Route path="subscriptions" element={<AdminSubscriptionPage />} />{' '}
-          {/* New route */}
+        <Route path="/access-denied" element={<AccessDeniedPage />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboardPage />} />
+            <Route path="tenants" element={<AdminTenantPage />} />
+            <Route
+              path="subscription-plans"
+              element={<AdminSubscriptionPlanPage />}
+            />
+            <Route path="subscriptions" element={<AdminSubscriptionPage />} />{' '}
+            {/* New route */}
+          </Route>
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import avatar from '../../../assets/avatar1.png'
+import useAuthStore from '../../store/authStore'
 
 const AdminSidebar: React.FC = () => {
   const location = useLocation()
+  const fullName = useAuthStore((state) => state.user?.fullName) // Fetch fullName from auth store
+  const email = useAuthStore((state) => state.user?.sub) // Fetch email from auth store (assuming 'sub' is the email)
 
   const getLinkClass = (path: string) => {
     const baseClasses = 'flex items-center space-x-2 py-2 px-4 rounded-lg'
@@ -190,8 +193,12 @@ const AdminSidebar: React.FC = () => {
             alt="User Avatar"
           />
           <div>
-            <p className="text-sm font-medium text-white">Alex Turner</p>
-            <p className="text-xs text-gray-400">alex.turner@modern.inc</p>
+            <p className="text-sm font-medium text-white">
+              {fullName || 'User Name'}
+            </p>
+            <p className="text-xs text-gray-400">
+              {email || 'user@example.com'}
+            </p>
           </div>
         </div>
       </div>

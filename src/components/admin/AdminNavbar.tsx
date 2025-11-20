@@ -1,7 +1,37 @@
-import React from 'react'
+import React, { useState, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import avatar from '../../../assets/avatar1.png' // Adjust path as necessary
+import useAuthStore from '../../store/authStore'
 
 const AdminNavbar: React.FC = () => {
+  const logout = useAuthStore((state) => state.logout)
+  const fullName = useAuthStore((state) => state.user?.fullName) // Fetch fullName from auth store
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout() // Clear authentication tokens/session using Zustand
+    console.log('User logged out')
+    navigate('/')
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setDropdownOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
   return (
     <header className="flex justify-between items-center p-4 bg-white border-b border-gray-200">
       <div className="flex items-center">
@@ -47,13 +77,36 @@ const AdminNavbar: React.FC = () => {
             ></path>
           </svg>
         </button>
-        <div className="flex items-center space-x-2">
-          <img
-            className="w-8 h-8 rounded-full"
-            src={avatar} // Use the imported avatar
-            alt="User Avatar"
-          />
-          <span className="text-gray-700 font-medium">User Name</span>
+        <div className="relative" ref={dropdownRef}>
+          <button
+            className="flex items-center space-x-2 focus:outline-none"
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+          >
+            <img
+              className="w-8 h-8 rounded-full"
+              src={avatar} // Use the imported avatar
+              alt="User Avatar"
+            />
+            <span className="text-gray-700 font-medium">
+              {fullName || 'User Name'}
+            </span>
+          </button>
+          {dropdownOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+              <a
+                href="/profile" // Placeholder for profile page
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                Profile
+              </a>
+              <button
+                onClick={handleLogout}
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </header>

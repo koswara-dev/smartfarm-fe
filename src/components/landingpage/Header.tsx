@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import useAuthStore from '../../store/authStore'
 
 interface HeaderData {
   appName: string
@@ -8,6 +9,7 @@ interface HeaderData {
 }
 
 const Header: React.FC = () => {
+  const { isAuthenticated } = useAuthStore()
   const [headerData, setHeaderData] = useState<HeaderData | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
@@ -82,12 +84,21 @@ const Header: React.FC = () => {
           </a>
         </div>
         <div className="hidden md:block">
-          <Link
-            to="/register"
-            className="bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700 transition duration-300"
-          >
-            Daftar / Coba Gratis
-          </Link>
+          {isAuthenticated ? (
+            <Link
+              to="/admin"
+              className="bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700 transition duration-300"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <Link
+              to="/login"
+              className="bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700 transition duration-300"
+            >
+              Daftar / Coba Gratis
+            </Link>
+          )}
         </div>
         <div className="md:hidden">
           <button
@@ -189,13 +200,23 @@ const Header: React.FC = () => {
         >
           Kontak
         </a>
-        <Link
-          to="/register"
-          className="bg-green-600 text-white px-8 py-3 rounded-full hover:bg-green-700 transition duration-300"
-          onClick={closeMobileMenu}
-        >
-          Daftar / Coba Gratis
-        </Link>
+        {isAuthenticated ? (
+          <Link
+            to="/admin"
+            className="bg-green-600 text-white px-8 py-3 rounded-full hover:bg-green-700 transition duration-300"
+            onClick={closeMobileMenu}
+          >
+            Dashboard
+          </Link>
+        ) : (
+          <Link
+            to="/login"
+            className="bg-green-600 text-white px-8 py-3 rounded-full hover:bg-green-700 transition duration-300"
+            onClick={closeMobileMenu}
+          >
+            Daftar / Coba Gratis
+          </Link>
+        )}
       </div>
     </header>
   )

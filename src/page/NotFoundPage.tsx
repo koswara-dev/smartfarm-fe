@@ -1,28 +1,7 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
-import data from '../../assets/data.json'
 
 const NotFoundPage: React.FC = () => {
-  useEffect(() => {
-    const originalTitle = document.title
-    const originalFavicon = document.getElementById(
-      'favicon'
-    ) as HTMLLinkElement | null
-    const originalFaviconHref = originalFavicon ? originalFavicon.href : ''
-
-    document.title = data.titleApp + ' - 404 Not Found'
-    if (originalFavicon) {
-      originalFavicon.href = data.favicon
-    }
-
-    return () => {
-      document.title = originalTitle
-      if (originalFavicon) {
-        originalFavicon.href = originalFaviconHref
-      }
-    }
-  }, [])
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="text-center">
