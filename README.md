@@ -1,41 +1,72 @@
-# vite React TypeScript tailwindcss starter
+# Project Smartfarm Frontend
 
-Template for vite, React + tailwindcss + TypeScript projects with some tools preconfigured.
+Selamat datang di repositori frontend untuk proyek Smartfarm! Proyek ini bertujuan untuk menyediakan antarmuka pengguna yang intuitif dan responsif untuk mengelola dan memantau sistem pertanian cerdas.
 
-## About
+![Screenshot](assets/Screenshot_1.jpg)
 
-Template for vite, React + tailwindcss + TypeScript projects with some tools preconfigured.
+## Tentang Proyek
 
-![Screenshot](assets/screenshot.png)
+Proyek Smartfarm ini dibangun menggunakan Vite, React, TypeScript, dan Tailwind CSS. Ini adalah aplikasi frontend yang terhubung dengan backend untuk mengelola data terkait pertanian, seperti sensor, perangkat, jadwal irigasi, dan informasi tenant/pengguna. Aplikasi ini dirancang untuk administrator dan pengguna akhir untuk memantau dan mengontrol operasi pertanian.
 
-### Libraries
+### Fitur Utama
 
-- [React 18](https://reactjs.org/)
-- [React Router 6](https://reactrouter.com)
-- [tailwindcss 3](https://tailwindcss.com/)
-  - [tailwindcss forms plugin](https://tailwindcss-forms.vercel.app/)
-- [TypeScript 4.9.5](https://www.typescriptlang.org/)
-- [vite 4](https://vitejs.dev/)
-- [vitetest](https://vitest.dev/)
+-   **Dashboard Admin:** Tinjauan komprehensif untuk administrator, termasuk manajemen pengguna, tenant, paket langganan, dan langganan.
+-   **Manajemen Pengguna:** Menambah, memperbarui, dan menghapus pengguna.
+-   **Manajemen Tenant:** Mengelola informasi tenant dan statusnya.
+-   **Manajemen Langganan:** Mengatur paket langganan dan status langganan.
+-   **Autentikasi Aman:** Menggunakan `authStore` dengan JWT untuk manajemen sesi yang aman.
+-   **Antarmuka Responsif:** Dibangun dengan Tailwind CSS untuk pengalaman pengguna yang mulus di berbagai perangkat.
 
-### Tools
+### Teknologi yang Digunakan
 
-- [commitlint 17](https://commitlint.js.org)
-- [Conventional Commits 1](https://www.conventionalcommits.org)
-- [editorconfig](https://editorconfig.org/)
-- [eslint 8](https://eslint.org/)
-- [husky 8](https://typicode.github.io/husky/#/)
-- [Prettier 2](https://prettier.io/)
-- [VS Code settings](https://code.visualstudio.com/)
+-   **Framework:** React 18
+-   **Build Tool:** Vite 4
+-   **Bahasa:** TypeScript
+-   **Styling:** Tailwind CSS 3 (dengan plugin `tailwindcss forms`)
+-   **Routing:** React Router 6
+-   **State Management:** Zustand
+-   **HTTP Client:** Axios
+-   **Authentikasi:** JWT-decode
+-   **Testing:** Vitest
+-   **Linting & Formatting:** ESLint, Prettier
+-   **Version Control Hooks:** Husky, commitlint (dengan Conventional Commits)
 
-## Usage
+## Instalasi dan Penggunaan
 
-Create a new project from this template by clicking the "Use this template" button:
+Untuk menjalankan proyek ini secara lokal, ikuti langkah-langkah berikut:
 
-![](assets/template-usage.png)
+### Prasyarat
 
-```bash
-yarn
-yarn dev
-yarn test
-```
+Pastikan Anda memiliki Node.js (disarankan versi LTS) dan Yarn terinstal di sistem Anda.
+
+### Langkah-langkah
+
+1.  **Clone repositori:**
+    ```bash
+    git clone [URL_REPOSITORI_ANDA]
+    cd smartfarm-fe
+    ```
+
+2.  **Instal dependensi:**
+    ```bash
+    yarn install
+    ```
+
+3.  **Jalankan aplikasi dalam mode pengembangan:**
+    ```bash
+    yarn dev
+    ```
+    Aplikasi akan berjalan di `http://localhost:5173` (atau port lain yang tersedia).
+
+4.  **Jalankan tes:**
+    ```bash
+    yarn test
+    ```
+
+## Kontribusi
+
+Kami menerima kontribusi! Silakan fork repositori, buat branch fitur Anda, dan kirimkan pull request. Pastikan untuk mengikuti pedoman commit dan gaya kode yang ada.
+
+## Lisensi
+
+Proyek ini dilisensikan di bawah [LICENSE_ANDA].
