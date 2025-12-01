@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import AdminContent from '../components/admin/AdminContent'
 import { useTenantStore, Tenant } from '../store/tenantStore'
 import 'react-toastify/dist/ReactToastify.css'
@@ -8,7 +9,8 @@ import {
   PencilIcon,
   TrashIcon,
   PlusCircleIcon,
-  ArrowPathIcon
+  ArrowPathIcon,
+  EyeIcon // Add EyeIcon for view details
 } from '@heroicons/react/24/outline'
 
 const AdminTenantPage: React.FC = () => {
@@ -202,6 +204,13 @@ const AdminTenantPage: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      <Link
+                        to={`/admin/tenants/${tenant.id}`}
+                        className="text-blue-600 hover:text-blue-900 mr-3 transition duration-300 ease-in-out transform hover:scale-110"
+                        title="View Details"
+                      >
+                        <EyeIcon className="h-5 w-5" />
+                      </Link>
                       <button
                         onClick={() => handleEdit(tenant.id)}
                         className="text-indigo-600 hover:text-indigo-900 mr-3 transition duration-300 ease-in-out transform hover:scale-110"

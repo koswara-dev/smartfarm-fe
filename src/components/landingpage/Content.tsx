@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
+import data from '../../../assets/data.json'
 
 interface Feature {
   icon: string
@@ -18,18 +19,7 @@ interface ContentData {
 }
 
 const Content: React.FC = () => {
-  const [contentData, setContentData] = useState<ContentData | null>(null)
-
-  useEffect(() => {
-    fetch('/assets/data.json')
-      .then((response) => response.json())
-      .then((data) => setContentData(data))
-      .catch((error) => console.error('Error loading content data:', error))
-  }, [])
-
-  if (!contentData) {
-    return null // Or a loading spinner
-  }
+  const contentData: ContentData = data
 
   const { features, products } = contentData
 

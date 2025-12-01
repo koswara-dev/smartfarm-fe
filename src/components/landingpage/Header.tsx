@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import useAuthStore from '../../store/authStore'
+import data from '../../../assets/data.json'
 
 interface HeaderData {
   appName: string
@@ -10,24 +11,16 @@ interface HeaderData {
 
 const Header: React.FC = () => {
   const { isAuthenticated } = useAuthStore()
-  const [headerData, setHeaderData] = useState<HeaderData | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const headerData: HeaderData = data
 
   useEffect(() => {
-    fetch('/assets/data.json')
-      .then((response) => response.json())
-      .then((data) => {
-        setHeaderData(data)
-        // Update favicon dynamically
-        const faviconLink = document.getElementById(
-          'favicon'
-        ) as HTMLLinkElement
-        if (faviconLink && data.favicon) {
-          faviconLink.href = data.favicon
-        }
-      })
-      .catch((error) => console.error('Error loading header data:', error))
-  }, [])
+    // Update favicon dynamically
+    const faviconLink = document.getElementById('favicon') as HTMLLinkElement
+    if (faviconLink && headerData.favicon) {
+      faviconLink.href = headerData.favicon
+    }
+  }, [headerData])
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
@@ -35,10 +28,6 @@ const Header: React.FC = () => {
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false)
-  }
-
-  if (!headerData) {
-    return null // Or a loading spinner
   }
 
   return (

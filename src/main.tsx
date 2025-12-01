@@ -13,6 +13,7 @@ import AdminSubscriptionPage from './page/AdminSubscriptionPage' // Import the n
 import LoginPage from './page/LoginPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import AccessDeniedPage from './page/AccessDeniedPage'
+import AdminTenantDetailPage from './page/AdminTenantDetailPage' // Import AdminTenantDetailPage
 
 createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -26,6 +27,11 @@ createRoot(document.getElementById('root') as HTMLElement).render(
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboardPage />} />
             <Route path="tenants" element={<AdminTenantPage />} />
+            <Route
+              path="tenants/:id"
+              element={<AdminTenantDetailPage />}
+            />{' '}
+            {/* New route for tenant detail */}
             <Route
               path="subscription-plans"
               element={<AdminSubscriptionPlanPage />}

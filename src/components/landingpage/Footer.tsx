@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
+import data from '../../../assets/data.json'
 
 interface ContactInfo {
   email: string | null
@@ -24,18 +25,7 @@ interface FooterData {
 }
 
 const Footer: React.FC = () => {
-  const [footerData, setFooterData] = useState<FooterData | null>(null)
-
-  useEffect(() => {
-    fetch('/assets/data.json')
-      .then((response) => response.json())
-      .then((data) => setFooterData(data))
-      .catch((error) => console.error('Error loading footer data:', error))
-  }, [])
-
-  if (!footerData) {
-    return null // Or a loading spinner
-  }
+  const footerData: FooterData = data
 
   const { appName, logoFooter, footerMotto, contact, socialMedia } = footerData
 

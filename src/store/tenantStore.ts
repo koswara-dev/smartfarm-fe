@@ -13,6 +13,9 @@ export interface Tenant {
   createdAt: string
   updatedAt: string
   active: boolean
+  logoUrl?: string // Optional field for tenant logo
+  latitude?: number // Optional field for map latitude
+  longitude?: number // Optional field for map longitude
 }
 
 // Define the state structure for the tenant store
