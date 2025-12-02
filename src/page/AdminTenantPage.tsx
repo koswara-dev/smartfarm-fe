@@ -6,11 +6,9 @@ import 'react-toastify/dist/ReactToastify.css'
 import TenantModal, { SaveableTenant } from '../components/admin/TenantModal'
 import DeleteConfirmationModal from '../components/admin/DeleteConfirmationModal'
 import {
-  PencilIcon,
-  TrashIcon,
   PlusCircleIcon,
   ArrowPathIcon,
-  EyeIcon // Add EyeIcon for view details
+  EllipsisVerticalIcon // New icon for actions
 } from '@heroicons/react/24/outline'
 
 const AdminTenantPage: React.FC = () => {
@@ -32,6 +30,7 @@ const AdminTenantPage: React.FC = () => {
   const [filterIsActive, setFilterIsActive] = useState<boolean | undefined>(
     undefined
   )
+  const [openDropdownId, setOpenDropdownId] = useState<number | null>(null) // State to manage open dropdown
 
   useEffect(() => {
     fetchTenants(filterIsActive)
@@ -63,12 +62,13 @@ const AdminTenantPage: React.FC = () => {
     }
   }
 
-  const handleSave = async (tenantData: SaveableTenant) => {
-    if (tenantData.id) {
-      await updateTenant(tenantData.id, tenantData)
+  const handleSave = async (tenantFormData: FormData) => {
+    // Extract ID if it exists in the FormData
+    const id = tenantFormData.get('id')
+    if (id) {
+      await updateTenant(Number(id), tenantFormData)
     } else {
-      const { id, ...newTenantData } = tenantData // Exclude id for creation
-      await createTenant(newTenantData)
+      await createTenant(tenantFormData)
     }
     setIsModalOpen(false)
   }
@@ -146,16 +146,13 @@ const AdminTenantPage: React.FC = () => {
                     Name
                   </th>
                   <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Email
-                  </th>
-                  <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Domain
-                  </th>
-                  <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Subdomain
+                    Contact Info
                   </th>
                   <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Phone Number
+                  </th>
+                  <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Logo
                   </th>
                   <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Active
@@ -175,16 +172,26 @@ const AdminTenantPage: React.FC = () => {
                       {tenant.name}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                      {tenant.email}
-                    </td>
-                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                      {tenant.domain}
-                    </td>
-                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                      {tenant.subdomain}
+                      <p className="text-gray-900 whitespace-no-wrap">
+                        {tenant.email}
+                      </p>
+                      <p className="text-gray-600 whitespace-no-wrap text-xs">
+                        {tenant.domain} / {tenant.subdomain}
+                      </p>
                     </td>
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                       {tenant.phoneNumber}
+                    </td>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                      {tenant.logoUrl ? (
+                        <img
+                          src={tenant.logoUrl}
+                          alt={`${tenant.name} logo`}
+                          className="h-10 w-10 object-contain"
+                        />
+                      ) : (
+                        'N/A'
+                      )}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                       <span
@@ -203,28 +210,50 @@ const AdminTenantPage: React.FC = () => {
                         </span>
                       </span>
                     </td>
-                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                      <Link
-                        to={`/admin/tenants/${tenant.id}`}
-                        className="text-blue-600 hover:text-blue-900 mr-3 transition duration-300 ease-in-out transform hover:scale-110"
-                        title="View Details"
-                      >
-                        <EyeIcon className="h-5 w-5" />
-                      </Link>
+                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm relative">
                       <button
-                        onClick={() => handleEdit(tenant.id)}
-                        className="text-indigo-600 hover:text-indigo-900 mr-3 transition duration-300 ease-in-out transform hover:scale-110"
-                        title="Edit Tenant"
+                        onClick={() =>
+                          setOpenDropdownId(
+                            openDropdownId === tenant.id ? null : tenant.id
+                          )
+                        }
+                        className="text-gray-600 hover:text-gray-900 transition duration-300 ease-in-out transform hover:scale-110"
+                        title="Actions"
                       >
-                        <PencilIcon className="h-5 w-5" />
+                        <EllipsisVerticalIcon className="h-5 w-5" />
                       </button>
-                      <button
-                        onClick={() => handleDelete(tenant.id)}
-                        className="text-red-600 hover:text-red-900 transition duration-300 ease-in-out transform hover:scale-110"
-                        title="Delete Tenant"
-                      >
-                        <TrashIcon className="h-5 w-5" />
-                      </button>
+                      {openDropdownId === tenant.id && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                          <Link
+                            to={`/admin/tenants/${tenant.id}`}
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            title="View Details"
+                            onClick={() => setOpenDropdownId(null)}
+                          >
+                            View Details
+                          </Link>
+                          <button
+                            onClick={() => {
+                              handleEdit(tenant.id)
+                              setOpenDropdownId(null)
+                            }}
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            title="Edit Tenant"
+                          >
+                            Edit Tenant
+                          </button>
+                          <button
+                            onClick={() => {
+                              handleDelete(tenant.id)
+                              setOpenDropdownId(null)
+                            }}
+                            className="block w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-100"
+                            title="Delete Tenant"
+                          >
+                            Delete Tenant
+                          </button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -238,7 +267,15 @@ const AdminTenantPage: React.FC = () => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onSave={handleSave}
-          initialData={currentTenant}
+          initialData={
+            currentTenant
+              ? {
+                  ...currentTenant,
+                  logoUrl: tenants.find((t) => t.id === currentTenant.id)
+                    ?.logoUrl // Ensure logoUrl is passed if available
+                }
+              : null
+          }
         />
       )}
 

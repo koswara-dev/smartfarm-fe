@@ -24,10 +24,8 @@ interface TenantState {
   loading: boolean
   error: string | null
   fetchTenants: (isActive?: boolean) => Promise<void>
-  createTenant: (
-    newTenant: Omit<Tenant, 'id' | 'createdAt' | 'updatedAt'>
-  ) => Promise<void>
-  updateTenant: (id: number, updatedTenant: Partial<Tenant>) => Promise<void>
+  createTenant: (newTenant: FormData) => Promise<void>
+  updateTenant: (id: number, updatedTenant: FormData) => Promise<void>
   deleteTenant: (id: number) => Promise<void>
 }
 
@@ -59,10 +57,14 @@ export const useTenantStore = create<TenantState>((set, get) => ({
     }
   },
 
-  createTenant: async (newTenant) => {
+  createTenant: async (newTenant: FormData) => {
     set({ loading: true, error: null })
     try {
-      const response = await api.post('/api/v1/tenants', newTenant)
+      const response = await api.post('/api/v1/tenants', newTenant, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
       if (response.data.success) {
         get().fetchTenants() // Refresh the list
         toast.success('Tenant created successfully!')
@@ -78,10 +80,14 @@ export const useTenantStore = create<TenantState>((set, get) => ({
     }
   },
 
-  updateTenant: async (id, updatedTenant) => {
+  updateTenant: async (id, updatedTenant: FormData) => {
     set({ loading: true, error: null })
     try {
-      const response = await api.put(`/api/v1/tenants/${id}`, updatedTenant)
+      const response = await api.put(`/api/v1/tenants/${id}`, updatedTenant, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
       if (response.data.success) {
         get().fetchTenants() // Refresh the list
         toast.success('Tenant updated successfully!')

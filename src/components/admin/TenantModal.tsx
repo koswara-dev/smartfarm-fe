@@ -12,6 +12,7 @@ export type SaveableTenant = {
   subdomain: string
   phoneNumber: string
   active: boolean
+  logoUrl?: string // Add logoUrl to the saveable tenant type
 }
 
 // Define Zod schema for tenant validation
@@ -25,7 +26,8 @@ const tenantSchema = z.object({
     .string()
     .min(1, 'Phone Number is required')
     .regex(/^\d+$/, 'Phone Number must contain only digits'),
-  active: z.boolean() // Active is always a boolean
+  active: z.boolean(), // Active is always a boolean
+  logo: z.any().optional() // Allow any file type for logo, optional
 })
 
 type TenantFormData = z.infer<typeof tenantSchema>
@@ -33,7 +35,7 @@ type TenantFormData = z.infer<typeof tenantSchema>
 interface TenantModalProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (tenant: SaveableTenant) => void
+  onSave: (tenant: FormData) => void // Change onSave to accept FormData
   initialData: SaveableTenant | null
 }
 
@@ -51,19 +53,23 @@ const TenantModal: React.FC<TenantModalProps> = ({
   } = useForm<TenantFormData>({
     resolver: zodResolver(tenantSchema),
     defaultValues: {
-      id: 0,
+      id: undefined,
       name: '',
       email: '',
       domain: '',
       subdomain: '',
       phoneNumber: '',
-      active: false
+      active: false,
+      logo: undefined
     }
   })
 
   useEffect(() => {
     if (initialData) {
-      reset(initialData)
+      reset({
+        ...initialData,
+        logo: undefined // Reset logo input when initialData changes
+      })
     } else {
       reset({
         id: undefined, // Set id to undefined for new tenants
@@ -72,13 +78,30 @@ const TenantModal: React.FC<TenantModalProps> = ({
         domain: '',
         subdomain: '',
         phoneNumber: '',
-        active: false
+        active: false,
+        logo: undefined
       })
     }
   }, [initialData, reset])
 
   const onSubmit = (data: TenantFormData) => {
-    onSave(data)
+    const formData = new FormData()
+
+    if (data.id) {
+      formData.append('id', data.id.toString())
+    }
+    formData.append('name', data.name)
+    formData.append('email', data.email)
+    formData.append('domain', data.domain)
+    formData.append('subdomain', data.subdomain)
+    formData.append('phoneNumber', data.phoneNumber)
+    formData.append('active', data.active.toString())
+
+    if (data.logo && data.logo[0]) {
+      formData.append('logo', data.logo[0])
+    }
+
+    onSave(formData)
   }
 
   if (!isOpen) return null
@@ -182,6 +205,26 @@ const TenantModal: React.FC<TenantModalProps> = ({
             {errors.phoneNumber && (
               <p className="text-red-500 text-xs italic">
                 {errors.phoneNumber.message}
+              </p>
+            )}
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="logo"
+              className="block text-gray-700 text-sm font-bold mb-2"
+            >
+              Tenant Logo
+            </label>
+            <input
+              type="file"
+              id="logo"
+              {...register('logo')}
+              accept="image/*"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+            {errors.logo && (
+              <p className="text-red-500 text-xs italic">
+                {errors.logo.message as string}
               </p>
             )}
           </div>
