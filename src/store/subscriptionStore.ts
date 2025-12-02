@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { toast } from 'react-toastify' // Import toast
+import * as XLSX from 'xlsx'
+import { saveAs } from 'file-saver'
 import { api } from '../config/api'
 
 export interface Subscription {
@@ -54,6 +56,11 @@ interface SubscriptionStore {
     >
   ) => Promise<void>
   deleteSubscription: (id: number) => Promise<void>
+  exportSubscriptionsToExcel: (
+    status?: string,
+    billingCycle?: string,
+    subscriptionPlanId?: string | null
+  ) => Promise<void>
 }
 
 export const useSubscriptionStore = create<SubscriptionStore>()(
@@ -195,6 +202,80 @@ export const useSubscriptionStore = create<SubscriptionStore>()(
           'Failed to delete subscription'
         set({ error: errorMessage, loading: false })
         toast.error(errorMessage)
+      }
+    },
+
+    exportSubscriptionsToExcel: async (
+      status,
+      billingCycle,
+      subscriptionPlanId
+    ) => {
+      set({ loading: true, error: null })
+      try {
+        const params: {
+          status?: string
+          billingCycle?: string
+          subscriptionPlanId?: string
+          page?: number
+          size?: number
+        } = { size: 9999 } // Fetch all subscriptions for export
+        if (status && status !== 'All') {
+          params.status = status === 'Active' ? 'true' : 'false'
+        }
+        if (billingCycle && billingCycle !== 'All') {
+          params.billingCycle = billingCycle
+        }
+        if (subscriptionPlanId && subscriptionPlanId !== 'All') {
+          params.subscriptionPlanId = subscriptionPlanId
+        }
+
+        const response = await api.get('/api/v1/subscriptions', { params })
+        if (response.data.success) {
+          const allSubscriptions: Subscription[] = response.data.data.content
+
+          const dataForExcel = allSubscriptions.map((sub) => ({
+            ID: sub.id,
+            'Tenant Name': sub.tenantName,
+            'Subscription Plan': sub.subscriptionPlanName,
+            'Start Date': new Date(sub.startDate).toLocaleDateString(),
+            'End Date': sub.endDate
+              ? new Date(sub.endDate).toLocaleDateString()
+              : 'N/A',
+            'Billing Cycle': sub.billingCycle,
+            'Is Active': sub.isActive ? 'Yes' : 'No',
+            'Price Monthly': sub.priceMonthly,
+            'Price Yearly': sub.priceYearly,
+            'Created At': new Date(sub.createdAt).toLocaleString(),
+            'Updated At': sub.updatedAt
+              ? new Date(sub.updatedAt).toLocaleString()
+              : 'N/A'
+          }))
+
+          const worksheet = XLSX.utils.json_to_sheet(dataForExcel)
+          const workbook = XLSX.utils.book_new()
+          XLSX.utils.book_append_sheet(workbook, worksheet, 'Subscriptions')
+          const excelBuffer = XLSX.write(workbook, {
+            bookType: 'xlsx',
+            type: 'array'
+          })
+          const data = new Blob([excelBuffer], {
+            type: 'application/octet-stream'
+          })
+          saveAs(data, 'subscriptions_export.xlsx')
+          toast.success('Subscriptions exported successfully!')
+        } else {
+          set({ error: response.data.message, loading: false })
+          toast.error(response.data.message)
+        }
+      } catch (err: any) {
+        const errorMessage =
+          err.response?.data?.message ||
+          err.message ||
+          'Failed to export subscriptions'
+        set({ error: errorMessage, loading: false })
+        toast.error(errorMessage)
+      } finally {
+        set({ loading: false })
       }
     }
   }))

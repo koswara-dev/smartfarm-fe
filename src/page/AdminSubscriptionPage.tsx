@@ -16,7 +16,8 @@ import {
   ArrowPathIcon,
   PlusCircleIcon,
   PencilIcon,
-  TrashIcon
+  TrashIcon,
+  ArrowDownTrayIcon
 } from '@heroicons/react/24/outline'
 
 const AdminSubscriptionPage: React.FC = () => {
@@ -98,6 +99,16 @@ const AdminSubscriptionPage: React.FC = () => {
   const handleCloseDeleteModal = () => {
     setIsDeleteModalOpen(false)
     setSubscriptionToDelete(null)
+  }
+
+  const { exportSubscriptionsToExcel } = useSubscriptionStore()
+
+  const handleExportExcel = async () => {
+    await exportSubscriptionsToExcel(
+      filterStatus,
+      filterBillingCycle,
+      filterSubscriptionPlanId
+    )
   }
 
   if (loading) {
@@ -185,14 +196,24 @@ const AdminSubscriptionPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Add New Subscription button on the right */}
-        <button
-          onClick={handleAddClick}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center"
-        >
-          <PlusCircleIcon className="h-5 w-5 mr-2" />
-          Add New Subscription
-        </button>
+        <div className="flex space-x-4">
+          {/* Export to Excel button */}
+          <button
+            onClick={handleExportExcel}
+            className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center"
+          >
+            <ArrowDownTrayIcon className="h-5 w-5 mr-2" />
+            Export to Excel
+          </button>
+          {/* Add New Subscription button on the right */}
+          <button
+            onClick={handleAddClick}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex items-center"
+          >
+            <PlusCircleIcon className="h-5 w-5 mr-2" />
+            Add New Subscription
+          </button>
+        </div>
       </div>
 
       <div className="bg-white shadow-lg rounded-lg overflow-hidden">
