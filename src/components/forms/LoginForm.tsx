@@ -1,19 +1,40 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
 import { api } from '../../config/api'
 import useAuthStore from '../../store/authStore'
 
+// captcha
+import {
+  loadCaptchaEnginge,
+  LoadCanvasTemplate,
+  validateCaptcha
+} from 'react-simple-captcha'
+
 const LoginForm: React.FC = () => {
   const login = useAuthStore((state) => state.login)
   const navigate = useNavigate()
+
   const [email, setEmail] = useState('samaltman@openai.id')
   const [password, setPassword] = useState('user1234')
   const [rememberMe, setRememberMe] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
+  // captcha state
+  const [captchaInput, setCaptchaInput] = useState('')
+
+  useEffect(() => {
+    loadCaptchaEnginge(6) // generate captcha 6 karakter
+  }, [])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Validate Captcha First
+    if (validateCaptcha(captchaInput) === false) {
+      alert('Captcha salah, silakan coba lagi!')
+      return
+    }
 
     try {
       const response = await api.post('/api/auth/login', {
@@ -22,7 +43,7 @@ const LoginForm: React.FC = () => {
       })
 
       if (response.data.success) {
-        login(response.data.data.token) // Store the token in Zustand
+        login(response.data.data.token)
         navigate('/admin')
       } else {
         alert(response.data.message || 'Login failed.')
@@ -42,44 +63,37 @@ const LoginForm: React.FC = () => {
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Email */}
         <div>
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label className="block text-sm font-medium text-gray-700">
             Email
           </label>
           <input
             type="email"
-            id="email"
-            name="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
           />
         </div>
+
+        {/* Password */}
         <div>
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label className="block text-sm font-medium text-gray-700">
             Password
           </label>
           <div className="relative mt-1">
             <input
               type={showPassword ? 'text' : 'password'}
-              id="password"
-              name="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm pr-10"
+              className="block w-full px-4 py-2 border border-gray-300 rounded-md pr-10"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center"
             >
               {showPassword ? (
                 <EyeIcon className="h-5 w-5 text-gray-500" />
@@ -90,50 +104,56 @@ const LoginForm: React.FC = () => {
           </div>
         </div>
 
+        {/* CAPTCHA */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Verifikasi Captcha
+          </label>
+
+          {/* gambar captcha */}
+          <LoadCanvasTemplate reloadText="Reload" />
+
+          <input
+            type="text"
+            required
+            value={captchaInput}
+            onChange={(e) => setCaptchaInput(e.target.value)}
+            className="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md"
+            placeholder="Masukkan captcha di atas"
+          />
+        </div>
+
+        {/* Remember & Forgot */}
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <input
               id="remember-me"
-              name="remember-me"
               type="checkbox"
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
-              className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+              className="h-4 w-4 text-green-600 border-gray-300 rounded"
             />
-            <label
-              htmlFor="remember-me"
-              className="ml-2 block text-sm text-gray-900"
-            >
+            <label htmlFor="remember-me" className="ml-2 text-sm">
               Ingat saya
             </label>
           </div>
-
-          <div className="text-sm">
-            <a
-              href="#"
-              className="font-medium text-green-600 hover:text-green-700"
-            >
-              Lupa password?
-            </a>
-          </div>
+          <a className="text-sm text-green-600 cursor-pointer">
+            Lupa password?
+          </a>
         </div>
 
-        <div>
-          <button
-            type="submit"
-            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-300"
-          >
-            Login
-          </button>
-        </div>
+        {/* Submit */}
+        <button
+          type="submit"
+          className="w-full py-3 rounded-md text-white bg-green-600 hover:bg-green-700"
+        >
+          Login
+        </button>
       </form>
 
       <p className="mt-6 text-center text-sm text-gray-600">
-        Belum punya akun?
-        <a
-          href="register"
-          className="font-medium text-green-600 hover:text-green-700"
-        >
+        Belum punya akun?{' '}
+        <a href="register" className="text-green-600 font-medium">
           Daftar sekarang
         </a>
       </p>
