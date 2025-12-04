@@ -1,26 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import useAuthStore from '../../store/authStore'
+import logo from '../../../assets/logo.png'
 import data from '../../../assets/data.json'
 
 interface HeaderData {
   appName: string
-  logoHeader: string
-  favicon: string
 }
 
 const Header: React.FC = () => {
   const { isAuthenticated } = useAuthStore()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const headerData: HeaderData = data
-
-  useEffect(() => {
-    // Update favicon dynamically
-    const faviconLink = document.getElementById('favicon') as HTMLLinkElement
-    if (faviconLink && headerData.favicon) {
-      faviconLink.href = headerData.favicon
-    }
-  }, [headerData])
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
@@ -37,7 +28,7 @@ const Header: React.FC = () => {
           <Link to="/" className="flex items-center space-x-2">
             <img
               id="header-logo"
-              src={headerData.logoHeader}
+              src={logo}
               alt={`${headerData.appName} Logo`}
               className="h-10"
             />

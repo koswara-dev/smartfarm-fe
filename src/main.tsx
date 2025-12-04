@@ -14,6 +14,7 @@ import LoginPage from './page/LoginPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import AccessDeniedPage from './page/AccessDeniedPage'
 import AdminTenantDetailPage from './page/AdminTenantDetailPage' // Import AdminTenantDetailPage
+import AdminUserPage from './page/AdminUserPage' // Import AdminUserPage
 
 createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -38,6 +39,8 @@ createRoot(document.getElementById('root') as HTMLElement).render(
             />
             <Route path="subscriptions" element={<AdminSubscriptionPage />} />{' '}
             {/* New route */}
+            <Route path="users" element={<AdminUserPage />} />{' '}
+            {/* New route for user management */}
           </Route>
         </Route>
         <Route path="*" element={<NotFoundPage />} />

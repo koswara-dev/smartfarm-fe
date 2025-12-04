@@ -15,7 +15,7 @@ const LoginForm: React.FC = () => {
   const login = useAuthStore((state) => state.login)
   const navigate = useNavigate()
 
-  const [email, setEmail] = useState('samaltman@openai.id')
+  const [email, setEmail] = useState('elonmusk@openai.id')
   const [password, setPassword] = useState('user1234')
   const [rememberMe, setRememberMe] = useState(false)
   const [showPassword, setShowPassword] = useState(false)

@@ -1,5 +1,6 @@
 import React from 'react'
 import data from '../../../assets/data.json'
+import logoFooter from '../../../assets/logo1.png'
 
 interface ContactInfo {
   email: string | null
@@ -14,7 +15,6 @@ interface SocialMediaLink {
 
 interface FooterData {
   appName: string
-  logoFooter: string
   footerMotto: string
   contact: ContactInfo
   socialMedia: {
@@ -27,7 +27,7 @@ interface FooterData {
 const Footer: React.FC = () => {
   const footerData: FooterData = data
 
-  const { appName, logoFooter, footerMotto, contact, socialMedia } = footerData
+  const { appName, footerMotto, contact, socialMedia } = footerData
 
   return (
     <footer className="bg-gray-800 text-gray-300 py-12">
