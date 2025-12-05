@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import AdminContent from '../components/admin/AdminContent'
 import { useUserStore, User } from '../store/userStore'
+import { useTenantStore, Tenant } from '../store/tenantStore'
 import 'react-toastify/dist/ReactToastify.css'
 import UserModal, { SaveableUser } from '../components/admin/UserModal'
 import DeleteConfirmationModal from '../components/admin/DeleteConfirmationModal'
@@ -22,6 +23,12 @@ const AdminUserPage: React.FC = () => {
     updateUser,
     deleteUser
   } = useUserStore()
+  const {
+    tenants,
+    fetchTenants,
+    loading: tenantsLoading, // Rename loading to avoid conflict
+    error: tenantsError // Rename error to avoid conflict
+  } = useTenantStore()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [userToDeleteId, setUserToDeleteId] = useState<number | null>(null)
@@ -34,6 +41,10 @@ const AdminUserPage: React.FC = () => {
   useEffect(() => {
     fetchUsers(filterIsActive)
   }, [fetchUsers, filterIsActive])
+
+  useEffect(() => {
+    fetchTenants()
+  }, [fetchTenants])
 
   const handleCreate = () => {
     setCurrentUser(null)
@@ -61,18 +72,16 @@ const AdminUserPage: React.FC = () => {
     }
   }
 
-  const handleSave = async (userFormData: FormData) => {
-    // Extract ID if it exists in the FormData
-    const id = userFormData.get('id')
-    if (id) {
-      await updateUser(Number(id), userFormData)
+  const handleSave = async (userFormData: SaveableUser) => {
+    if (userFormData.id) {
+      await updateUser(userFormData.id, userFormData)
     } else {
       await createUser(userFormData)
     }
     setIsModalOpen(false)
   }
 
-  if (loading) {
+  if (loading || tenantsLoading) {
     return (
       <AdminContent title="Users">
         <div className="text-center py-10 flex flex-col items-center justify-center">
@@ -83,10 +92,12 @@ const AdminUserPage: React.FC = () => {
     )
   }
 
-  if (error) {
+  if (error || tenantsError) {
     return (
       <AdminContent title="Users">
-        <div className="text-center py-10 text-red-500">Error: {error}</div>
+        <div className="text-center py-10 text-red-500">
+          Error: {error || tenantsError}
+        </div>
       </AdminContent>
     )
   }
@@ -241,6 +252,7 @@ const AdminUserPage: React.FC = () => {
           onClose={() => setIsModalOpen(false)}
           onSave={handleSave}
           initialData={currentUser}
+          tenants={tenants}
         />
       )}
 

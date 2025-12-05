@@ -17,7 +17,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }, [isAuthenticated, checkTokenExpiration, logout])
 
   if (!isAuthenticated) {
-    return <Navigate to="/access-denied" replace />
+    return <Navigate to="/login" replace />
   }
 
   return children ? children : <Outlet />
